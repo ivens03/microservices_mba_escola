@@ -13,7 +13,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Back-end - Colegio Docuemntação")
+                        .title("Back-end - Colegio Documentação")
                         .description("Documentação de APIs do colegio")
                         .version("0.0.1")
                         .contact(new Contact()
