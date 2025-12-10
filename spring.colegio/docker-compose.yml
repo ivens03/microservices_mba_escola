@@ -1,0 +1,59 @@
+services:
+  # -----------------------------
+  # Banco de Dados (PostgreSQL)
+  # -----------------------------
+  postgres:
+    image: postgres:16.11
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: colegio_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - colegio-network
+
+  # -----------------------------
+  # Back-end (Spring Boot)
+  # -----------------------------
+  back-end:
+    container_name: back-end
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/colegio_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - postgres
+    networks:
+      - colegio-network
+
+  # -----------------------------
+  # Front-end (React)
+  # -----------------------------
+  front-end:
+    container_name: front-end
+    build:
+      context: ../react.colegio
+      dockerfile: Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - back-end
+    networks:
+      - colegio-network
+
+volumes:
+  postgres_data:
+
+networks:
+  colegio-network:
+    driver: bridge
