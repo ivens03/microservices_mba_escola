@@ -1,6 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.dto;
 
 import br.com.mba.spring.colegio.usuarios.enums.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
@@ -50,4 +51,10 @@ public class UsuarioDTO {
     @Schema(example = "Mãe: (11) 98888-7777")
     private String contatoEmergencia;
 
+    @NotNull(message = "Tipo de usuário é obrigatório")
+    @Schema(description = "Perfil de acesso", example = "ALUNO")
+    private TipoUsuario tipoUsuario;
+
+    @Schema(description = "Status do cadastro (Padrão: true)", example = "true")
+    private Boolean ativo;
 }

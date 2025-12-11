@@ -4,7 +4,8 @@ import br.com.mba.spring.colegio.globalHandler.exeption.BusinessException;
 import br.com.mba.spring.colegio.usuarios.dto.EnderecoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
-import br.com.mba.spring.colegio.usuarios.service.UsuarioService;
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
+import br.com.mba.spring.colegio.usuarios.service.impl.UsuarioServiceImpl; // Import Interface
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,8 +43,9 @@ public class UsuarioControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    // Correctly mocking the Interface used in Controller
     @MockitoBean
-    private UsuarioService usuarioService;
+    private UsuarioServiceImpl usuarioService;
 
     private UsuarioDTO criarDtoValido() {
         UsuarioDTO dto = new UsuarioDTO();
@@ -53,6 +55,9 @@ public class UsuarioControllerTest {
         dto.setMatricula("API-001");
         dto.setTelefone("11999999999");
         dto.setDataNascimento(java.time.LocalDate.of(2000, 1, 1));
+
+        // Ensure enum is set
+        dto.setTipoUsuario(TipoUsuario.PROFESSOR);
 
         EnderecoDTO end = new EnderecoDTO();
         end.setLogradouro("Rua");
@@ -74,7 +79,7 @@ public class UsuarioControllerTest {
         usuarioSalvo.setIdUsuario(1L);
         usuarioSalvo.setNome(dto.getNome());
 
-        when(usuarioService.create(any(UsuarioDTO.class))).thenReturn(usuarioSalvo);
+        when(usuarioService.createUsuario(any(UsuarioDTO.class))).thenReturn(usuarioSalvo);
 
         mockMvc.perform(post("/api/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -102,7 +107,7 @@ public class UsuarioControllerTest {
         usuario.setIdUsuario(1L);
         usuario.setNome("João");
 
-        when(usuarioService.findById(1L)).thenReturn(usuario);
+        when(usuarioService.findUsuarioById(1L)).thenReturn(usuario);
 
         mockMvc.perform(get("/api/usuarios/1"))
                 .andExpect(status().isOk())
@@ -117,7 +122,7 @@ public class UsuarioControllerTest {
         usuarioAtualizado.setIdUsuario(1L);
         usuarioAtualizado.setNome(dto.getNome());
 
-        when(usuarioService.update(eq(1L), any(UsuarioDTO.class))).thenReturn(usuarioAtualizado);
+        when(usuarioService.updateUsuario(eq(1L), any(UsuarioDTO.class))).thenReturn(usuarioAtualizado);
 
         mockMvc.perform(patch("/api/usuarios/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -138,15 +143,13 @@ public class UsuarioControllerTest {
     void deveTratarErroNegocio() throws Exception {
         UsuarioDTO dto = criarDtoValido();
 
-        // Simula erro no serviço (ex: CPF duplicado)
-        when(usuarioService.create(any())).thenThrow(new BusinessException("CPF duplicado"));
+        when(usuarioService.createUsuario(any())).thenThrow(new BusinessException("CPF duplicado"));
 
         mockMvc.perform(post("/api/usuarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isBadRequest()) // Ou o status que você definiu no Handler
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Regra de Negócio"))
                 .andExpect(jsonPath("$.message").value("CPF duplicado"));
     }
-
 }

@@ -1,5 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.repository;
 
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
 import br.com.mba.spring.colegio.usuarios.model.Endereco;
 import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
@@ -37,6 +38,8 @@ public class UsuarioRepositoryTest {
                 .build();
 
         return Usuario.builder()
+                .status(true)
+                .ativo(true)
                 .nome("Teste DB")
                 .cpf("000.000.000-01")
                 .matricula("TEST-001")
@@ -45,6 +48,7 @@ public class UsuarioRepositoryTest {
                 .dataNascimento(LocalDate.of(1995, 5, 5))
                 .status(true)
                 .genero(Genero.OUTRO)
+                .tipoUsuario(TipoUsuario.PROFESSOR)
                 .endereco(endereco)
                 .build();
     }
@@ -87,5 +91,15 @@ public class UsuarioRepositoryTest {
 
         boolean existe = usuarioRepository.existsByEmail("teste@db.com");
         assertThat(existe).isTrue();
+    }
+
+    @Test
+    @DisplayName("Deve persistir usuário com ativo=true por padrão")
+    void checkDefaultValues() {
+        Usuario u = criarUsuarioModelo();
+        Usuario salvo = usuarioRepository.save(u);
+
+        assertThat(salvo.getAtivo()).isTrue();
+        assertThat(salvo.getTipoUsuario()).isEqualTo(TipoUsuario.PROFESSOR);
     }
 }

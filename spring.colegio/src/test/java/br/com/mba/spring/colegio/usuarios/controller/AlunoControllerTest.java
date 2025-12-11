@@ -4,9 +4,10 @@ import br.com.mba.spring.colegio.globalHandler.exeption.AlunoNotFoundException;
 import br.com.mba.spring.colegio.usuarios.dto.AlunoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.EnderecoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
 import br.com.mba.spring.colegio.usuarios.enums.Turno;
 import br.com.mba.spring.colegio.usuarios.model.Aluno;
-import br.com.mba.spring.colegio.usuarios.service.AlunoService;
+import br.com.mba.spring.colegio.usuarios.service.impl.AlunoServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,6 @@ import java.time.LocalDate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,8 +39,8 @@ public class AlunoControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean // Spring Boot 3.4+
-    private AlunoService alunoService;
+    @MockitoBean
+    private AlunoServiceImpl alunoService;
 
     private AlunoDTO criarDtoCompleto() {
         UsuarioDTO u = new UsuarioDTO();
@@ -50,6 +50,9 @@ public class AlunoControllerTest {
         u.setMatricula("MAT-TESTE");
         u.setTelefone("11999998888");
         u.setDataNascimento(LocalDate.of(2010, 1, 1));
+
+        // CORREÇÃO: Preenchendo o campo obrigatório
+        u.setTipoUsuario(TipoUsuario.ALUNO);
 
         EnderecoDTO e = new EnderecoDTO();
         e.setLogradouro("Rua"); e.setNumero("1"); e.setBairro("B");
@@ -72,7 +75,7 @@ public class AlunoControllerTest {
         alunoSalvo.setIdAluno(1L);
         alunoSalvo.setSala(dto.getSala());
 
-        when(alunoService.create(any(AlunoDTO.class))).thenReturn(alunoSalvo);
+        when(alunoService.createAluno(any(AlunoDTO.class))).thenReturn(alunoSalvo);
 
         mockMvc.perform(post("/api/alunos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -84,10 +87,10 @@ public class AlunoControllerTest {
     @Test
     @DisplayName("GET /api/alunos/{id} - 404 Not Found")
     void getAlunoNotFound() throws Exception {
-        when(alunoService.findById(99L)).thenThrow(new AlunoNotFoundException("Não achei"));
+        when(alunoService.findAlunoById(99L)).thenThrow(new AlunoNotFoundException("Não achei"));
 
         mockMvc.perform(get("/api/alunos/99"))
-                .andExpect(status().isNotFound()) // Verifica se GlobalHandler capturou
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Aluno não encontrado"));
     }
@@ -100,7 +103,7 @@ public class AlunoControllerTest {
         alunoAtualizado.setIdAluno(1L);
         alunoAtualizado.setSala("Nova Sala");
 
-        when(alunoService.update(eq(1L), any(AlunoDTO.class))).thenReturn(alunoAtualizado);
+        when(alunoService.updateAluno(eq(1L), any(AlunoDTO.class))).thenReturn(alunoAtualizado);
 
         mockMvc.perform(put("/api/alunos/1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,5 +118,4 @@ public class AlunoControllerTest {
         mockMvc.perform(delete("/api/alunos/1"))
                 .andExpect(status().isNoContent());
     }
-
 }

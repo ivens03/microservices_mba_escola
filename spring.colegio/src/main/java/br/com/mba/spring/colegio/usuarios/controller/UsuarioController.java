@@ -2,7 +2,7 @@ package br.com.mba.spring.colegio.usuarios.controller;
 
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
-import br.com.mba.spring.colegio.usuarios.service.UsuarioService;
+import br.com.mba.spring.colegio.usuarios.service.impl.UsuarioServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,8 @@ import java.util.List;
 @Tag(name = "Usuários", description = "Gerenciamento de usuários do sistema escolar")
 public class UsuarioController {
 
-    private final UsuarioService usuarioService;
+    // CORREÇÃO: Usar a Interface, não a classe concreta
+    private final UsuarioServiceImpl usuarioService;
 
     @Operation(summary = "Criar novo usuário", description = "Cadastra um novo usuário no banco de dados com validações.")
     @ApiResponses(value = {
@@ -33,7 +34,7 @@ public class UsuarioController {
     })
     @PostMapping
     public ResponseEntity<Usuario> create(@RequestBody @Valid UsuarioDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.createUsuario(dto));
     }
 
     @Operation(summary = "Atualizar usuário parcialmente (PATCH)",
@@ -44,26 +45,25 @@ public class UsuarioController {
     })
     @PatchMapping("/{id}")
     public ResponseEntity<Usuario> update(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
-        return ResponseEntity.ok(usuarioService.update(id, dto));
+        return ResponseEntity.ok(usuarioService.updateUsuario(id, dto));
     }
 
     @Operation(summary = "Listar todos", description = "Retorna lista completa de usuários.")
     @GetMapping
     public ResponseEntity<List<Usuario>> findAll() {
-        return ResponseEntity.ok(usuarioService.findAll());
+        return ResponseEntity.ok(usuarioService.findAllUsuarios());
     }
 
     @Operation(summary = "Buscar por ID", description = "Retorna um usuário específico.")
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(usuarioService.findById(id));
+        return ResponseEntity.ok(usuarioService.findUsuarioById(id));
     }
 
     @Operation(summary = "Deletar usuário", description = "Remove um usuário do sistema.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        usuarioService.delete(id);
+        usuarioService.deleteUsuario(id);
         return ResponseEntity.noContent().build();
     }
-
 }

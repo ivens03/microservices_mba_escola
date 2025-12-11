@@ -1,6 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.dto;
 
 import br.com.mba.spring.colegio.usuarios.enums.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -34,6 +35,7 @@ public class UsuarioDTOTest {
         endereco.setCep("01000-000");
 
         UsuarioDTO dto = new UsuarioDTO();
+        dto.setTipoUsuario(TipoUsuario.ALUNO);
         dto.setNome("João da Silva");
         dto.setDataNascimento(LocalDate.of(1990, 1, 1));
         dto.setCpf("123.456.789-00");

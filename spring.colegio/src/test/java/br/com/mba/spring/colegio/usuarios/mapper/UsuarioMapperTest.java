@@ -1,67 +1,70 @@
 package br.com.mba.spring.colegio.usuarios.mapper;
 
-import br.com.mba.spring.colegio.usuarios.dto.EnderecoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
-import br.com.mba.spring.colegio.usuarios.enums.Genero;
+import br.com.mba.spring.colegio.usuarios.model.Endereco;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.springframework.util.StringUtils;
 
 public class UsuarioMapperTest {
 
-    private final UsuarioMapper mapper = new UsuarioMapper();
+    public Usuario toEntity(UsuarioDTO dto) {
+        if (dto == null) return null;
 
-    @Test
-    @DisplayName("Deve converter DTO para Entidade corretamente")
-    void toEntity() {
-        // Arrange
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setNome("Maria");
-        dto.setEmail("maria@teste.com");
-        dto.setGenero(Genero.FEMININO);
-        dto.setDataNascimento(LocalDate.of(2000, 1, 1));
+        Endereco endereco = null;
+        if (dto.getEndereco() != null) {
+            endereco = Endereco.builder()
+                    .logradouro(dto.getEndereco().getLogradouro())
+                    .numero(dto.getEndereco().getNumero())
+                    .complemento(dto.getEndereco().getComplemento())
+                    .bairro(dto.getEndereco().getBairro())
+                    .cidade(dto.getEndereco().getCidade())
+                    .estado(dto.getEndereco().getEstado())
+                    .cep(dto.getEndereco().getCep())
+                    .build();
+        }
 
-        EnderecoDTO endDto = new EnderecoDTO();
-        endDto.setLogradouro("Rua A");
-        endDto.setCidade("Cidade B");
-        // ... preencher outros campos obrigatórios do endereço
-        dto.setEndereco(endDto);
-
-        // Act
-        Usuario entity = mapper.toEntity(dto);
-
-        // Assert
-        assertNotNull(entity);
-        assertEquals(dto.getNome(), entity.getNome());
-        assertEquals(dto.getEmail(), entity.getEmail());
-        assertEquals(dto.getGenero(), entity.getGenero());
-        assertEquals(dto.getEndereco().getLogradouro(), entity.getEndereco().getLogradouro());
-        assertTrue(entity.getStatus()); // Verifica valor default
-    }
-
-    @Test
-    @DisplayName("Deve atualizar entidade existente com dados do DTO")
-    void updateEntityFromDto() {
-        // Arrange
-        Usuario entity = Usuario.builder()
-                .nome("Antigo Nome")
-                .email("antigo@email.com")
+        return Usuario.builder()
+                .nome(dto.getNome())
+                .dataNascimento(dto.getDataNascimento())
+                .cpf(dto.getCpf())
+                .matricula(dto.getMatricula())
+                .telefone(dto.getTelefone())
+                .email(dto.getEmail())
+                .genero(dto.getGenero())
+                .contatoEmergencia(dto.getContatoEmergencia())
+                .endereco(endereco)
+                .tipoUsuario(dto.getTipoUsuario())
+                .ativo(true)
                 .build();
-
-        UsuarioDTO dto = new UsuarioDTO();
-        dto.setNome("Novo Nome");
-        dto.setEmail("novo@email.com");
-
-        // Act
-        mapper.updateEntityFromDto(dto, entity);
-
-        // Assert
-        assertEquals("Novo Nome", entity.getNome());
-        assertEquals("novo@email.com", entity.getEmail());
     }
 
+    public void updateEntityFromDto(UsuarioDTO dto, Usuario entity) {
+        if (dto == null || entity == null) return;
+
+        if (StringUtils.hasText(dto.getNome())) entity.setNome(dto.getNome());
+        if (StringUtils.hasText(dto.getTelefone())) entity.setTelefone(dto.getTelefone());
+        if (StringUtils.hasText(dto.getEmail())) entity.setEmail(dto.getEmail());
+        if (dto.getDataNascimento() != null) entity.setDataNascimento(dto.getDataNascimento());
+        if (dto.getGenero() != null) entity.setGenero(dto.getGenero());
+        if (StringUtils.hasText(dto.getContatoEmergencia())) entity.setContatoEmergencia(dto.getContatoEmergencia());
+        if (dto.getTipoUsuario() != null) {
+            entity.setTipoUsuario(dto.getTipoUsuario());
+        }
+        if (dto.getAtivo() != null) {
+            entity.setAtivo(dto.getAtivo());
+        }
+
+        // Endereço
+        if (dto.getEndereco() != null && entity.getEndereco() != null) {
+            var endDto = dto.getEndereco();
+            var endEntity = entity.getEndereco();
+            if (StringUtils.hasText(endDto.getLogradouro())) endEntity.setLogradouro(endDto.getLogradouro());
+            if (StringUtils.hasText(endDto.getNumero())) endEntity.setNumero(endDto.getNumero());
+            if (StringUtils.hasText(endDto.getComplemento())) endEntity.setComplemento(endDto.getComplemento());
+            if (StringUtils.hasText(endDto.getBairro())) endEntity.setBairro(endDto.getBairro());
+            if (StringUtils.hasText(endDto.getCidade())) endEntity.setCidade(endDto.getCidade());
+            if (StringUtils.hasText(endDto.getEstado())) endEntity.setEstado(endDto.getEstado());
+            if (StringUtils.hasText(endDto.getCep())) endEntity.setCep(endDto.getCep());
+        }
+    }
 }

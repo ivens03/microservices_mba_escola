@@ -44,14 +44,17 @@ public class AlunoServiceTest {
         Aluno alunoMapeado = new Aluno();
 
         // Mocks
-        when(usuarioService.create(any())).thenReturn(usuarioSalvo);
+        // CORREÇÃO: create -> createUsuario
+        when(usuarioService.createUsuario(any())).thenReturn(usuarioSalvo);
         when(alunoMapper.toEntity(dto)).thenReturn(alunoMapeado);
         when(alunoRepository.save(alunoMapeado)).thenReturn(alunoMapeado);
 
-        Aluno resultado = alunoService.create(dto);
+        // CORREÇÃO: create -> createAluno
+        Aluno resultado = alunoService.createAluno(dto);
 
         assertThat(resultado).isNotNull();
-        verify(usuarioService).create(dto.getDadosPessoais());
+        // CORREÇÃO: create -> createUsuario
+        verify(usuarioService).createUsuario(dto.getDadosPessoais());
         verify(alunoRepository).save(alunoMapeado);
     }
 
@@ -60,7 +63,8 @@ public class AlunoServiceTest {
     void findByIdNaoEncontrado() {
         when(alunoRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThrows(AlunoNotFoundException.class, () -> alunoService.findById(99L));
+        // CORREÇÃO: findById -> findAlunoById
+        assertThrows(AlunoNotFoundException.class, () -> alunoService.findAlunoById(99L));
     }
 
     @Test
@@ -68,9 +72,9 @@ public class AlunoServiceTest {
     void deleteSucesso() {
         when(alunoRepository.existsById(1L)).thenReturn(true);
 
-        alunoService.delete(1L);
+        // CORREÇÃO: delete -> deleteAluno
+        alunoService.deleteAluno(1L);
 
         verify(alunoRepository).deleteById(1L);
     }
-
 }

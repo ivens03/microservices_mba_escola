@@ -1,6 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.model;
 
 import br.com.mba.spring.colegio.usuarios.enums.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.TipoUsuario;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,5 +52,15 @@ public class Usuario {
     private Genero genero;
 
     private String contatoEmergencia;
+
+    @Builder.Default
+    @Column(nullable = false)
+    @Schema(description = "Indica se o usuário está ativo no sistema", defaultValue = "true")
+    private Boolean ativo = true;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_usuario", nullable = false)
+    @Schema(description = "Perfil do usuário no sistema")
+    private TipoUsuario tipoUsuario;
 
 }

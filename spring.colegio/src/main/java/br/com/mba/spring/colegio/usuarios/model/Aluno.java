@@ -17,7 +17,6 @@ public class Aluno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idAluno;
 
-    // Relacionamento 1:1 com a tabela base de usuários
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario", nullable = false, unique = true)
     private Usuario usuario;

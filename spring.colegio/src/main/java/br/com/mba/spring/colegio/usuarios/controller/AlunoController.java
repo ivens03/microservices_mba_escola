@@ -2,7 +2,7 @@ package br.com.mba.spring.colegio.usuarios.controller;
 
 import br.com.mba.spring.colegio.usuarios.dto.AlunoDTO;
 import br.com.mba.spring.colegio.usuarios.model.Aluno;
-import br.com.mba.spring.colegio.usuarios.service.AlunoService;
+import br.com.mba.spring.colegio.usuarios.service.impl.AlunoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -23,7 +23,7 @@ import java.util.List;
 @Tag(name = "Alunos", description = "Gerenciamento acadêmico de alunos")
 public class AlunoController {
 
-    private final AlunoService alunoService;
+    private final AlunoServiceImpl alunoService;
 
     @Operation(summary = "Cadastrar Aluno", description = "Cria um novo registro de aluno e seu usuário base.")
     @ApiResponses(value = {
@@ -33,32 +33,31 @@ public class AlunoController {
     })
     @PostMapping
     public ResponseEntity<Aluno> create(@RequestBody @Valid AlunoDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.create(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.createAluno(dto));
     }
 
     @Operation(summary = "Atualizar Aluno", description = "Atualiza dados acadêmicos e pessoais do aluno.")
     @PutMapping("/{id}")
     public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody @Valid AlunoDTO dto) {
-        return ResponseEntity.ok(alunoService.update(id, dto));
+        return ResponseEntity.ok(alunoService.updateAluno(id, dto));
     }
 
     @Operation(summary = "Listar todos", description = "Retorna lista de alunos matriculados.")
     @GetMapping
     public ResponseEntity<List<Aluno>> findAll() {
-        return ResponseEntity.ok(alunoService.findAll());
+        return ResponseEntity.ok(alunoService.findAllAlunos());
     }
 
     @Operation(summary = "Buscar por ID", description = "Retorna detalhes de um aluno específico.")
     @GetMapping("/{id}")
     public ResponseEntity<Aluno> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(alunoService.findById(id));
+        return ResponseEntity.ok(alunoService.findAlunoById(id));
     }
 
     @Operation(summary = "Remover Aluno", description = "Remove o aluno e o usuário vinculado do sistema.")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        alunoService.delete(id);
+        alunoService.deleteAluno(id);
         return ResponseEntity.noContent().build();
     }
-
 }

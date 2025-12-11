@@ -9,19 +9,16 @@ import br.com.mba.spring.colegio.usuarios.repository.UsuarioRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class UsuarioServiceTest {
@@ -43,7 +40,7 @@ public class UsuarioServiceTest {
 
         when(usuarioRepository.existsByCpf(dto.getCpf())).thenReturn(true);
 
-        assertThrows(BusinessException.class, () -> usuarioService.create(dto));
+        assertThrows(BusinessException.class, () -> usuarioService.createUsuario(dto));
 
         verify(usuarioRepository, never()).save(any());
     }
@@ -54,16 +51,18 @@ public class UsuarioServiceTest {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setCpf("123.456.789-00");
         dto.setMatricula("MAT-123");
+        dto.setEmail("teste@email.com");
 
         Usuario usuarioMapeado = new Usuario();
 
         // Mocks
         when(usuarioRepository.existsByCpf(any())).thenReturn(false);
         when(usuarioRepository.existsByMatricula(any())).thenReturn(false);
+        when(usuarioRepository.existsByEmail(any())).thenReturn(false);
         when(usuarioMapper.toEntity(dto)).thenReturn(usuarioMapeado);
         when(usuarioRepository.save(usuarioMapeado)).thenReturn(usuarioMapeado);
 
-        Usuario resultado = usuarioService.create(dto);
+        Usuario resultado = usuarioService.createUsuario(dto);
 
         assertThat(resultado).isNotNull();
         verify(usuarioRepository).save(usuarioMapeado);
@@ -79,7 +78,7 @@ public class UsuarioServiceTest {
         when(usuarioRepository.findById(id)).thenReturn(Optional.of(usuarioExistente));
         when(usuarioRepository.save(usuarioExistente)).thenReturn(usuarioExistente);
 
-        Usuario resultado = usuarioService.update(id, dto);
+        Usuario resultado = usuarioService.updateUsuario(id, dto);
 
         assertThat(resultado).isNotNull();
         verify(usuarioMapper).updateEntityFromDto(dto, usuarioExistente);
@@ -91,6 +90,6 @@ public class UsuarioServiceTest {
     void updateFalhaNaoEncontrado() {
         when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(BusinessException.class, () -> usuarioService.update(1L, new UsuarioDTO()));
+        assertThrows(BusinessException.class, () -> usuarioService.updateUsuario(1L, new UsuarioDTO()));
     }
 }
