@@ -1,6 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.dto;
 
-import br.com.mba.spring.colegio.usuarios.model.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;

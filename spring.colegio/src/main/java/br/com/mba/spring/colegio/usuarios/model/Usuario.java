@@ -1,5 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.model;
 
+import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;

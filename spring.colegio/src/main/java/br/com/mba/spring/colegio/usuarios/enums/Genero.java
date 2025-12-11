@@ -1,4 +1,4 @@
-package br.com.mba.spring.colegio.usuarios.model;
+package br.com.mba.spring.colegio.usuarios.enums;
 
 public enum Genero {
     MASCULINO,

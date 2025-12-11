@@ -1,7 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.repository;
 
 import br.com.mba.spring.colegio.usuarios.model.Endereco;
-import br.com.mba.spring.colegio.usuarios.model.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
 
 import org.junit.jupiter.api.DisplayName;

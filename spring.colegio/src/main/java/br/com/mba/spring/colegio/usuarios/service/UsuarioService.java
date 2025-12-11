@@ -1,6 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.service;
 
-import br.com.mba.spring.colegio.exception.BusinessException;
+import br.com.mba.spring.colegio.globalHandler.exeption.BusinessException;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
 import br.com.mba.spring.colegio.usuarios.interfaces.CreateEntityInterface;
 import br.com.mba.spring.colegio.usuarios.interfaces.UpdateEntityInterface;

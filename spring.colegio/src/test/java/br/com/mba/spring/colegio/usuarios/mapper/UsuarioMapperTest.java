@@ -2,7 +2,7 @@ package br.com.mba.spring.colegio.usuarios.mapper;
 
 import br.com.mba.spring.colegio.usuarios.dto.EnderecoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
-import br.com.mba.spring.colegio.usuarios.model.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

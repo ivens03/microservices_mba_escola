@@ -1,6 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.controller;
 
-import br.com.mba.spring.colegio.exception.BusinessException;
+import br.com.mba.spring.colegio.globalHandler.exeption.BusinessException;
 import br.com.mba.spring.colegio.usuarios.dto.EnderecoDTO;
 import br.com.mba.spring.colegio.usuarios.dto.UsuarioDTO;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;

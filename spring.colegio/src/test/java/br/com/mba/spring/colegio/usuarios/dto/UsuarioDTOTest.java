@@ -1,6 +1,6 @@
 package br.com.mba.spring.colegio.usuarios.dto;
 
-import br.com.mba.spring.colegio.usuarios.model.Genero;
+import br.com.mba.spring.colegio.usuarios.enums.Genero;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
