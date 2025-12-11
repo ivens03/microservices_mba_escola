@@ -20,19 +20,13 @@ import java.util.List;
 public class AlunoService implements AlunoServiceImpl {
 
     private final AlunoRepository alunoRepository;
-
-    // CORREÇÃO: Injeção da Interface ao invés da Classe Concreta
     private final UsuarioServiceImpl usuarioService;
-
     private final AlunoMapper alunoMapper;
 
     @Override
     @Transactional
     public Aluno createAluno(AlunoDTO dto) {
-        // 1. Cria o Usuário Base através do serviço de usuário (já valida CPF, Email, etc.)
         Usuario usuarioSalvo = usuarioService.createUsuario(dto.getDadosPessoais());
-
-        // 2. Mapeia e salva o Aluno vinculado
         Aluno novoAluno = alunoMapper.toEntity(dto);
         novoAluno.setUsuario(usuarioSalvo);
 
@@ -43,10 +37,7 @@ public class AlunoService implements AlunoServiceImpl {
     @Transactional
     public Aluno updateAluno(Long id, AlunoDTO dto) {
         Aluno aluno = findAlunoById(id);
-
-        // O Mapper atualiza os campos do Aluno e delega a atualização do Usuario interno
         alunoMapper.updateEntityFromDto(dto, aluno);
-
         return alunoRepository.save(aluno);
     }
 
@@ -63,7 +54,6 @@ public class AlunoService implements AlunoServiceImpl {
 
     @Override
     public List<Aluno> findAlunosBySala(String sala) {
-        // Exemplo simplificado filtrando em memória
         return alunoRepository.findAll().stream()
                 .filter(a -> a.getSala().equalsIgnoreCase(sala))
                 .toList();
@@ -71,7 +61,6 @@ public class AlunoService implements AlunoServiceImpl {
 
     @Override
     public List<Aluno> findAlunosByTurno(Turno turno) {
-        // Mesma lógica, idealmente deve haver um método findByTurno no Repository
         return alunoRepository.findAll().stream()
                 .filter(a -> a.getTurno() == turno)
                 .toList();
@@ -80,9 +69,7 @@ public class AlunoService implements AlunoServiceImpl {
     @Override
     @Transactional
     public void deleteAluno(Long id) {
-        if (!alunoRepository.existsById(id)) {
-            throw new AlunoNotFoundException("Aluno não encontrado para exclusão.");
-        }
-        alunoRepository.deleteById(id);
+        Aluno aluno = findAlunoById(id);
+        usuarioService.deleteUsuario(aluno.getUsuario().getIdUsuario());
     }
 }

@@ -15,7 +15,6 @@ public class UsuarioMapper {
     public Usuario toEntity(UsuarioDTO dto) {
         if (dto == null) return null;
 
-        // Mapeamento manual do Endereço (se existir)
         Endereco endereco = null;
         if (dto.getEndereco() != null) {
             endereco = Endereco.builder()
@@ -39,43 +38,34 @@ public class UsuarioMapper {
                 .genero(dto.getGenero())
                 .contatoEmergencia(dto.getContatoEmergencia())
                 .endereco(endereco)
-                .status(true) // Padrão ao criar
+                .status(true) // Legado
+                // --- NOVOS CAMPOS ADICIONADOS AQUI ---
+                .tipoUsuario(dto.getTipoUsuario())
+                .ativo(true) // Regra: Todo novo usuário nasce ativo
                 .build();
     }
 
     /**
      * Atualiza Entidade existente com dados do DTO (Usado no PATCH)
-     * Apenas campos não nulos são atualizados.
      */
     public void updateEntityFromDto(UsuarioDTO dto, Usuario entity) {
         if (dto == null || entity == null) return;
 
-        if (StringUtils.hasText(dto.getNome())) {
-            entity.setNome(dto.getNome());
+        if (StringUtils.hasText(dto.getNome())) entity.setNome(dto.getNome());
+        if (StringUtils.hasText(dto.getTelefone())) entity.setTelefone(dto.getTelefone());
+        if (StringUtils.hasText(dto.getEmail())) entity.setEmail(dto.getEmail());
+        if (dto.getDataNascimento() != null) entity.setDataNascimento(dto.getDataNascimento());
+        if (dto.getGenero() != null) entity.setGenero(dto.getGenero());
+        if (StringUtils.hasText(dto.getContatoEmergencia())) entity.setContatoEmergencia(dto.getContatoEmergencia());
+
+        // Mapeamento dos novos campos no UPDATE
+        if (dto.getTipoUsuario() != null) {
+            entity.setTipoUsuario(dto.getTipoUsuario());
+        }
+        if (dto.getAtivo() != null) {
+            entity.setAtivo(dto.getAtivo());
         }
 
-        if (StringUtils.hasText(dto.getTelefone())) {
-            entity.setTelefone(dto.getTelefone());
-        }
-
-        if (StringUtils.hasText(dto.getEmail())) {
-            entity.setEmail(dto.getEmail());
-        }
-
-        // Verifica null pois LocalDate não é texto
-        if (dto.getDataNascimento() != null) {
-            entity.setDataNascimento(dto.getDataNascimento());
-        }
-
-        if (dto.getGenero() != null) {
-            entity.setGenero(dto.getGenero());
-        }
-
-        if (StringUtils.hasText(dto.getContatoEmergencia())) {
-            entity.setContatoEmergencia(dto.getContatoEmergencia());
-        }
-
-        // Lógica para Endereço (Objeto Aninhado)
         if (dto.getEndereco() != null && entity.getEndereco() != null) {
             var endDto = dto.getEndereco();
             var endEntity = entity.getEndereco();

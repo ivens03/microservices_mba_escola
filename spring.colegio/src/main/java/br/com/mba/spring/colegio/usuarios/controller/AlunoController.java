@@ -36,9 +36,10 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.createAluno(dto));
     }
 
-    @Operation(summary = "Atualizar Aluno", description = "Atualiza dados acadêmicos e pessoais do aluno.")
-    @PutMapping("/{id}")
-    public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody @Valid AlunoDTO dto) {
+    @Operation(summary = "Atualizar Aluno (Parcial)", description = "Atualiza parcialmente dados acadêmicos e pessoais do aluno. Campos omitidos não são alterados.")
+    @PatchMapping("/{id}")
+    public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody AlunoDTO dto) {
+        // Nota: @Valid foi removido para permitir envio parcial de dados (campos nulos no JSON)
         return ResponseEntity.ok(alunoService.updateAluno(id, dto));
     }
 
