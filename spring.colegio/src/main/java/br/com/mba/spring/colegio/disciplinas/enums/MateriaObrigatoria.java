@@ -1,6 +1,6 @@
 package br.com.mba.spring.colegio.disciplinas.enums;
 
-public enum MateriaObrigatoriaBrasil {
+public enum MateriaObrigatoria {
 
     // ------ JARDIM DE INFÂNCIA (EDUCAÇÃO INFANTIL) ------
     // A Educação Infantil é organizada em Campos de Experiência, e não em disciplinas tradicionais[citation:2][citation:5].
@@ -39,7 +39,7 @@ public enum MateriaObrigatoriaBrasil {
 
     private final String nomeFormatado;
 
-    MateriaObrigatoriaBrasil(String nomeFormatado) {
+    MateriaObrigatoria(String nomeFormatado) {
         this.nomeFormatado = nomeFormatado;
     }
 

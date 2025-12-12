@@ -62,6 +62,21 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro Interno", "Ocorreu um erro inesperado. Contate o suporte.", request);
     }
 
+    @ExceptionHandler(ProfessorNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProfessorNotFound(ProfessorNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Professor não encontrado", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(DisciplinaNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDisciplinaNotFound(DisciplinaNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Disciplina não encontrada", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateResource(DuplicateResourceException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, "Conflito de Dados", ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> buildResponse(HttpStatus status, String error, String message, HttpServletRequest request) {
         ErrorResponse response = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
