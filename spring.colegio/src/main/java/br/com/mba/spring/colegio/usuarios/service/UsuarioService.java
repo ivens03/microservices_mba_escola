@@ -8,6 +8,7 @@ import br.com.mba.spring.colegio.usuarios.repository.UsuarioRepository;
 import br.com.mba.spring.colegio.usuarios.service.impl.UsuarioServiceImpl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +19,12 @@ public class UsuarioService implements UsuarioServiceImpl {
 
     private final UsuarioRepository usuarioRepository;
     private final UsuarioMapper usuarioMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
     public Usuario createUsuario(UsuarioDTO dto) {
+
         if (usuarioRepository.existsByCpf(dto.getCpf())) {
             throw new BusinessException("CPF já cadastrado no sistema.");
         }
@@ -31,8 +34,14 @@ public class UsuarioService implements UsuarioServiceImpl {
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new BusinessException("Email já cadastrado.");
         }
+
         Usuario novoUsuario = usuarioMapper.toEntity(dto);
-        novoUsuario.setAtivo(true);
+
+        if (dto.getCpf() != null) {
+            String senhaPura = dto.getCpf().replaceAll("[^0-9]", "");
+            novoUsuario.setSenha(passwordEncoder.encode(senhaPura));
+        }
+
         return usuarioRepository.save(novoUsuario);
     }
 

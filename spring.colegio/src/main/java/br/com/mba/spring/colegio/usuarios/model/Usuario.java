@@ -63,4 +63,8 @@ public class Usuario {
     @Schema(description = "Perfil do usuário no sistema")
     private TipoUsuario tipoUsuario;
 
+    @Column(nullable = false)
+    @Schema(description = "Senha criptografada (Inicialmente o CPF sem pontuação)")
+    private String senha;
+
 }
