@@ -6,8 +6,10 @@ import br.com.mba.spring.colegio.usuarios.model.ResponsavelAluno;
 import br.com.mba.spring.colegio.usuarios.model.Usuario;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
@@ -16,54 +18,53 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class UsuarioMapperTest {
+@ExtendWith(MockitoExtension.class)
+public class ResponsavelAlunoMapperTest {
 
     @InjectMocks
     private ResponsavelAlunoMapper mapper;
 
     @Mock
-    private UsuarioMapper usuarioMapper; // Mockamos o mapper dependente
+    private UsuarioMapper usuarioMapper;
 
     @Test
-    @DisplayName("toEntity: Deve converter DTO para Entidade delegando ao UsuarioMapper")
+    @DisplayName("toEntity: Deve converter DTO para Entidade chamando UsuarioMapper")
     void toEntity() {
         // Cenário
         UsuarioDTO userDto = new UsuarioDTO();
         ResponsavelAlunoDTO dto = new ResponsavelAlunoDTO();
         dto.setDadosPessoais(userDto);
-        dto.setHistoricoAluno(Map.of("escolaAnterior", "Colegio X"));
+        dto.setHistoricoAluno(Map.of("chave", "valor"));
 
         Usuario usuarioMock = new Usuario();
         when(usuarioMapper.toEntity(userDto)).thenReturn(usuarioMock);
 
-        // Execução
+        // Ação
         ResponsavelAluno result = mapper.toEntity(dto);
 
-        // Validação
+        // Verificação
         assertNotNull(result);
-        assertEquals(usuarioMock, result.getUsuario()); // Verifica se o usuário foi setado
-        assertEquals("Colegio X", result.getHistoricoAluno().get("escolaAnterior"));
+        assertEquals(usuarioMock, result.getUsuario());
+        assertEquals("valor", result.getHistoricoAluno().get("chave"));
     }
 
     @Test
-    @DisplayName("updateEntityFromDto: Deve atualizar campos e chamar update do Usuario")
+    @DisplayName("updateEntityFromDto: Deve atualizar campos JSON e delegar update do Usuario")
     void updateEntity() {
         // Cenário
         ResponsavelAlunoDTO dto = new ResponsavelAlunoDTO();
-        dto.setPagamento(Map.of("situacao", "em dia"));
+        dto.setPagamento(Map.of("status", "ok"));
         dto.setDadosPessoais(new UsuarioDTO());
 
         ResponsavelAluno entity = new ResponsavelAluno();
         Usuario usuarioEntity = new Usuario();
         entity.setUsuario(usuarioEntity);
 
-        // Execução
+        // Ação
         mapper.updateEntityFromDto(dto, entity);
 
-        // Validação
-        assertEquals("em dia", entity.getPagamento().get("situacao"));
-
-        // Verifica se o método de update do UsuarioMapper foi chamado corretamente
+        // Verificação
+        assertEquals("ok", entity.getPagamento().get("status"));
         verify(usuarioMapper).updateEntityFromDto(dto.getDadosPessoais(), usuarioEntity);
     }
 }

@@ -1,8 +1,6 @@
 package br.com.mba.spring.colegio.globalHandler;
 
-import br.com.mba.spring.colegio.globalHandler.exeption.AlunoNotFoundException;
-import br.com.mba.spring.colegio.globalHandler.exeption.AlunoValidationException;
-import br.com.mba.spring.colegio.globalHandler.exeption.BusinessException;
+import br.com.mba.spring.colegio.globalHandler.exeption.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,12 +11,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResponsavelAlunoNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleResponsavelNotFound(ResponsavelAlunoNotFoundException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.NOT_FOUND, "Responsável não encontrado", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(DuplicateCpfException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateCpf(DuplicateCpfException ex, HttpServletRequest request) {
+        return buildResponse(HttpStatus.CONFLICT, "Conflito de Dados", ex.getMessage(), request);
+    }
 
     @ExceptionHandler(AlunoNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleAlunoNotFound(AlunoNotFoundException ex, HttpServletRequest request) {
@@ -52,7 +58,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
-        ex.printStackTrace(); // Importante para ver o erro no log do servidor
+        ex.printStackTrace();
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Erro Interno", "Ocorreu um erro inesperado. Contate o suporte.", request);
     }
 
@@ -66,5 +72,4 @@ public class GlobalExceptionHandler {
                 .build();
         return ResponseEntity.status(status).body(response);
     }
-
 }

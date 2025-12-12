@@ -36,26 +36,40 @@ public class AlunoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(alunoService.createAluno(dto));
     }
 
-    @Operation(summary = "Atualizar Aluno (Parcial)", description = "Atualiza parcialmente dados acadêmicos e pessoais do aluno. Campos omitidos não são alterados.")
+    @Operation(summary = "Atualizar Aluno (Parcial)", description = "Atualiza parcialmente dados acadêmicos e pessoais do aluno.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluno atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Aluno não encontrado")
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<Aluno> update(@PathVariable Long id, @RequestBody AlunoDTO dto) {
-        // Nota: @Valid foi removido para permitir envio parcial de dados (campos nulos no JSON)
         return ResponseEntity.ok(alunoService.updateAluno(id, dto));
     }
 
     @Operation(summary = "Listar todos", description = "Retorna lista de alunos matriculados.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+    })
     @GetMapping
     public ResponseEntity<List<Aluno>> findAll() {
         return ResponseEntity.ok(alunoService.findAllAlunos());
     }
 
     @Operation(summary = "Buscar por ID", description = "Retorna detalhes de um aluno específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Aluno encontrado"),
+            @ApiResponse(responseCode = "404", description = "Aluno não encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Aluno> findById(@PathVariable Long id) {
         return ResponseEntity.ok(alunoService.findAlunoById(id));
     }
 
-    @Operation(summary = "Remover Aluno", description = "Remove o aluno e o usuário vinculado do sistema.")
+    @Operation(summary = "Remover Aluno", description = "Inativa o aluno e o usuário vinculado do sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Aluno removido com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Aluno não encontrado")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         alunoService.deleteAluno(id);

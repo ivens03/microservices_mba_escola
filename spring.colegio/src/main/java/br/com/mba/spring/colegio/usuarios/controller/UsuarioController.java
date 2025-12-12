@@ -23,14 +23,13 @@ import java.util.List;
 @Tag(name = "Usuários", description = "Gerenciamento de usuários do sistema escolar")
 public class UsuarioController {
 
-    // CORREÇÃO: Usar a Interface, não a classe concreta
     private final UsuarioServiceImpl usuarioService;
 
     @Operation(summary = "Criar novo usuário", description = "Cadastra um novo usuário no banco de dados com validações.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
                     content = @Content(schema = @Schema(implementation = Usuario.class))),
-            @ApiResponse(responseCode = "400", description = "Erro de validação ou regra de negócio")
+            @ApiResponse(responseCode = "400", description = "Erro de validação ou regra de negócio (Ex: CPF já existente)")
     })
     @PostMapping
     public ResponseEntity<Usuario> create(@RequestBody @Valid UsuarioDTO dto) {
@@ -49,18 +48,29 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Listar todos", description = "Retorna lista completa de usuários.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Lista retornada com sucesso")
+    })
     @GetMapping
     public ResponseEntity<List<Usuario>> findAll() {
         return ResponseEntity.ok(usuarioService.findAllUsuarios());
     }
 
     @Operation(summary = "Buscar por ID", description = "Retorna um usuário específico.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuário encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> findById(@PathVariable Long id) {
         return ResponseEntity.ok(usuarioService.findUsuarioById(id));
     }
 
-    @Operation(summary = "Deletar usuário", description = "Remove um usuário do sistema.")
+    @Operation(summary = "Deletar usuário", description = "Realiza a exclusão lógica (inativação) de um usuário do sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Usuário inativado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         usuarioService.deleteUsuario(id);

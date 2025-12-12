@@ -1,6 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.model;
 
 import br.com.mba.spring.colegio.usuarios.enums.Turno;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +22,7 @@ public class Aluno {
     @JoinColumn(name = "usuario_id", referencedColumnName = "idUsuario", nullable = false, unique = true)
     private Usuario usuario;
 
-    @Column(nullable = false)
+    @Column(name = "nome_responsavel_legado")
     private String nomeResponsavel;
 
     @Column(columnDefinition = "jsonb")
@@ -34,5 +35,10 @@ public class Aluno {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Turno turno;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "responsavel_id")
+    @JsonIgnoreProperties("alunos")
+    private ResponsavelAluno responsavel;
 
 }
