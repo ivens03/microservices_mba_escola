@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/professores")
 @RequiredArgsConstructor
 @Tag(name = "Professores", description = "Gerenciamento de corpo docente")
+@CrossOrigin(origins = "*")
 public class ProfessorController {
 
     private final ProfessorServiceImpl service;

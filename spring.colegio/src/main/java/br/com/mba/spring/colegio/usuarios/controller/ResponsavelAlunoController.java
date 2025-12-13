@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/responsaveis")
 @RequiredArgsConstructor
 @Tag(name = "Responsáveis", description = "Gerenciamento de responsáveis pelos alunos")
+@CrossOrigin(origins = "*")
 public class ResponsavelAlunoController {
 
     private final ResponsavelAlunoServiceImpl service;
