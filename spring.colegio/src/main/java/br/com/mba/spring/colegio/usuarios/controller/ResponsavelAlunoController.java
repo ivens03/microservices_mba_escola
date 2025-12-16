@@ -1,6 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.controller;
 
 import br.com.mba.spring.colegio.usuarios.dto.ResponsavelAlunoDTO;
+import br.com.mba.spring.colegio.usuarios.model.Aluno;
 import br.com.mba.spring.colegio.usuarios.model.ResponsavelAluno;
 import br.com.mba.spring.colegio.usuarios.service.impl.ResponsavelAlunoServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/responsaveis")
@@ -77,5 +79,33 @@ public class ResponsavelAlunoController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteResponsavel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Vincular Aluno ao Responsável")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Vínculo criado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Responsável ou Aluno não encontrados")
+    })
+    @PostMapping("/{idResponsavel}/alunos/{idAluno}")
+    public ResponseEntity<Void> addAluno(@PathVariable Long idResponsavel, @PathVariable Long idAluno) {
+        service.addAlunoToResponsavel(idResponsavel, idAluno);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Desvincular Aluno do Responsável")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Vínculo removido com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Responsável ou Aluno não encontrados")
+    })
+    @DeleteMapping("/{idResponsavel}/alunos/{idAluno}")
+    public ResponseEntity<Void> removeAluno(@PathVariable Long idResponsavel, @PathVariable Long idAluno) {
+        service.removeAlunoFromResponsavel(idResponsavel, idAluno);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Listar Alunos de um Responsável")
+    @GetMapping("/{idResponsavel}/alunos")
+    public ResponseEntity<Set<Aluno>> getAlunosByResponsavel(@PathVariable Long idResponsavel) {
+        return ResponseEntity.ok(service.findAlunosByResponsavel(idResponsavel));
     }
 }

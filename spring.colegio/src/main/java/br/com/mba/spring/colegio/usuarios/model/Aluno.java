@@ -54,5 +54,5 @@ public class Aluno {
     @ManyToMany(mappedBy = "alunos", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("alunos")
     @Builder.Default
-    private Set<Disciplina> disciplinas = new HashSet<>();
+    private Set<ResponsavelAluno> responsaveis = new HashSet<>();
 }

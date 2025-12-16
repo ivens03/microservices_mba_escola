@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @Schema(description = "DTO para operações de cadastro e atualização de Responsáveis")
@@ -20,5 +21,8 @@ public class ResponsavelAlunoDTO {
 
     @Schema(description = "Dados de pagamento", example = "{\"metodo\": \"CARTAO\", \"vencimento\": 10}")
     private Map<String, Object> pagamento;
+
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private Set<Long> alunosIds;
 
 }

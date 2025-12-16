@@ -7,9 +7,7 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "responsaveis_alunos", schema = "usuarios")
@@ -35,8 +33,15 @@ public class ResponsavelAluno {
     @Schema(description = "Dados de pagamento e financeiro em formato JSON")
     private Map<String, Object> pagamento;
 
-    @OneToMany(mappedBy = "responsavel", cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("responsavel")
-    private List<Aluno> alunos = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "responsavel_aluno_vinculo",
+            schema = "usuarios",
+            joinColumns = @JoinColumn(name = "id_responsavel"),
+            inverseJoinColumns = @JoinColumn(name = "id_aluno")
+    )
+    @JsonIgnoreProperties("responsaveis")
+    @Builder.Default
+    private Set<Aluno> alunos = new HashSet<>();
 
 }

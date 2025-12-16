@@ -1,12 +1,14 @@
 package br.com.mba.spring.colegio.usuarios.service.impl;
 
 import br.com.mba.spring.colegio.usuarios.dto.ResponsavelAlunoDTO;
+import br.com.mba.spring.colegio.usuarios.model.Aluno;
 import br.com.mba.spring.colegio.usuarios.model.ResponsavelAluno;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ResponsavelAlunoServiceImpl {
 
@@ -29,4 +31,10 @@ public interface ResponsavelAlunoServiceImpl {
 
     @Operation(summary = "Remover Responsável")
     void deleteResponsavel(Long id);
+
+    void addAlunoToResponsavel(Long idResponsavel, Long idAluno);
+
+    void removeAlunoFromResponsavel(Long idResponsavel, Long idAluno);
+
+    Set<Aluno> findAlunosByResponsavel(Long idResponsavel);
 }

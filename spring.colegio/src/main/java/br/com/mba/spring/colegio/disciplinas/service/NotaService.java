@@ -21,25 +21,23 @@ import java.util.List;
 public class NotaService implements NotaServiceImpl {
 
     private final NotaRepository notaRepository;
-    private final AlunoServiceImpl alunoService;         // Serviço para buscar/validar Aluno
-    private final DisciplinaServiceImpl disciplinaService; // Serviço para buscar/validar Disciplina
+    private final AlunoServiceImpl alunoService;
+    private final DisciplinaServiceImpl disciplinaService;
 
     @Override
     @Transactional
     public Nota lancharNota(NotaDTO dto) {
-        // 1. Busca e valida se Aluno e Disciplina existem (lançam 404 se não existirem)
         Aluno aluno = alunoService.findAlunoById(dto.getIdAluno());
         Disciplina disciplina = disciplinaService.findDisciplinaById(dto.getIdDisciplina());
 
-        // 2. Valida duplicidade: Um aluno não pode ter duas notas para a mesma matéria no mesmo semestre
         if (notaRepository.existsByAlunoAndDisciplinaAndSemestre(aluno, disciplina, dto.getSemestre())) {
             throw new DuplicateResourceException(
                     String.format("Já existe uma nota lançada para o aluno %s na disciplina %s no semestre %d.",
-                            aluno.getUsuario().getNome(), disciplina.getNome(), dto.getSemestre())
+                            aluno.getUsuario().getNome(),
+                            disciplina.getMateria(),
+                            dto.getSemestre())
             );
         }
-
-        // 3. Monta a entidade
         Nota novaNota = Nota.builder()
                 .aluno(aluno)
                 .disciplina(disciplina)
@@ -54,14 +52,9 @@ public class NotaService implements NotaServiceImpl {
     @Transactional
     public Nota atualizarNota(Long id, NotaDTO dto) {
         Nota nota = buscarNotaPorId(id);
-
-        // Atualiza apenas o valor, pois mudar aluno/disciplina seria um novo lançamento
         if (dto.getValor() != null) {
             nota.setValor(dto.getValor());
         }
-
-        // Se permitir alterar semestre, validar duplicidade novamente aqui
-
         return notaRepository.save(nota);
     }
 
@@ -78,7 +71,6 @@ public class NotaService implements NotaServiceImpl {
 
     @Override
     public List<Nota> buscarNotasPorAluno(Long idAluno) {
-        // Garante que o aluno existe antes de buscar
         alunoService.findAlunoById(idAluno);
         return notaRepository.findByAluno_IdAluno(idAluno);
     }
