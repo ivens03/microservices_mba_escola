@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @Schema(description = "DTO para operações de cadastro e atualização de Alunos")
 public class AlunoDTO {
@@ -30,4 +32,6 @@ public class AlunoDTO {
     @Schema(example = "MANHA")
     private Turno turno;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private Set<Long> professoresIds;
 }

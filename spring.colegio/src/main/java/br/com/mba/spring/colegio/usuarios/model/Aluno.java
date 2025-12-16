@@ -1,5 +1,7 @@
 package br.com.mba.spring.colegio.usuarios.model;
 
+import br.com.mba.spring.colegio.disciplinas.model.Disciplina;
+import br.com.mba.spring.colegio.funcionarios.model.Professor;
 import br.com.mba.spring.colegio.usuarios.enums.Turno;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,6 +9,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "alunos", schema = "usuarios")
@@ -41,4 +46,13 @@ public class Aluno {
     @JsonIgnoreProperties("alunos")
     private ResponsavelAluno responsavel;
 
+    @ManyToMany(mappedBy = "alunos", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("alunos")
+    @Builder.Default
+    private Set<Professor> professores = new HashSet<>();
+
+    @ManyToMany(mappedBy = "alunos", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("alunos")
+    @Builder.Default
+    private Set<Disciplina> disciplinas = new HashSet<>();
 }

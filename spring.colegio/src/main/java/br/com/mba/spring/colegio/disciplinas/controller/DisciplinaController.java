@@ -4,8 +4,6 @@ import br.com.mba.spring.colegio.disciplinas.dto.DisciplinaDTO;
 import br.com.mba.spring.colegio.disciplinas.model.Disciplina;
 import br.com.mba.spring.colegio.disciplinas.service.DisciplinaService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -58,7 +56,6 @@ public class DisciplinaController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<Disciplina> update(@PathVariable Long id, @RequestBody @Valid DisciplinaDTO dto) {
-        // Assume-se que o seu Service tenha o método updateDisciplina(Long, DisciplinaDTO)
         return ResponseEntity.ok(disciplinaService.updateDisciplina(id, dto));
     }
 
@@ -69,8 +66,29 @@ public class DisciplinaController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        // Assume-se que o seu Service tenha o método deleteDisciplina(Long)
         disciplinaService.deleteDisciplina(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Matricular Aluno", description = "Matricula um aluno em uma disciplina específica.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Matrícula realizada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Disciplina ou Aluno não encontrados")
+    })
+    @PostMapping("/{idDisciplina}/matricula/{idAluno}")
+    public ResponseEntity<Void> matricularAluno(@PathVariable Long idDisciplina, @PathVariable Long idAluno) {
+        disciplinaService.matricularAluno(idDisciplina, idAluno);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Desmatricular Aluno", description = "Remove a matrícula de um aluno em uma disciplina.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Matrícula removida com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Disciplina ou Aluno não encontrados")
+    })
+    @DeleteMapping("/{idDisciplina}/matricula/{idAluno}")
+    public ResponseEntity<Void> desmatricularAluno(@PathVariable Long idDisciplina, @PathVariable Long idAluno) {
+        disciplinaService.desmatricularAluno(idDisciplina, idAluno);
         return ResponseEntity.noContent().build();
     }
 }

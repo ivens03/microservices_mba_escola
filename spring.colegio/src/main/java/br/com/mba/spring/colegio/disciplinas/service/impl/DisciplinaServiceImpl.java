@@ -11,4 +11,6 @@ public interface DisciplinaServiceImpl {
     List<Disciplina> findAllDisciplinas();
     Disciplina findDisciplinaById(Long id);
     void deleteDisciplina(Long id);
+    void matricularAluno(Long idDisciplina, Long idAluno);
+    void desmatricularAluno(Long idDisciplina, Long idAluno);
 }

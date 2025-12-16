@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.Set;
+
 @Data
 @Schema(description = "DTO para Professor")
 public class ProfessorDTO {
@@ -26,4 +28,6 @@ public class ProfessorDTO {
     @Schema(example = "Doutorado em Física")
     private String formacao;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
+    private Set<Long> alunosIds;
 }
