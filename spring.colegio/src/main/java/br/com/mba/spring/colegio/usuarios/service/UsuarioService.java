@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +30,6 @@ public class UsuarioService implements UsuarioServiceImpl {
         if (usuarioRepository.existsByCpf(dto.getCpf())) {
             throw new BusinessException("CPF já cadastrado no sistema.");
         }
-        if (usuarioRepository.existsByMatricula(dto.getMatricula())) {
-            throw new BusinessException("Matrícula já existente.");
-        }
         if (usuarioRepository.existsByEmail(dto.getEmail())) {
             throw new BusinessException("Email já cadastrado.");
         }
@@ -42,7 +41,14 @@ public class UsuarioService implements UsuarioServiceImpl {
             novoUsuario.setSenha(passwordEncoder.encode(senhaPura));
         }
 
-        return usuarioRepository.save(novoUsuario);
+        novoUsuario.setMatricula("TEMP-" + UUID.randomUUID());
+
+        Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
+
+        String matriculaFinal = gerarMatricula(usuarioSalvo.getIdUsuario());
+        usuarioSalvo.setMatricula(matriculaFinal);
+
+        return usuarioRepository.save(usuarioSalvo);
     }
 
     @Override
@@ -76,6 +82,19 @@ public class UsuarioService implements UsuarioServiceImpl {
         Usuario usuario = findUsuarioById(id);
         usuario.setAtivo(false);
         usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Gera a matrícula no formato: ANO + SEMESTRE + ID_GLOBAL (com padding)
+     * Exemplo: 2026 + 1 + 000054 -> 2026100054
+     */
+    private String gerarMatricula(Long idUsuario) {
+
+        LocalDate agora = LocalDate.now();
+        int ano = agora.getYear();
+        int semestre = agora.getMonthValue() <= 6 ? 1 : 2;
+
+        return String.format("%d%d%06d", ano, semestre, idUsuario);
     }
 
 }
